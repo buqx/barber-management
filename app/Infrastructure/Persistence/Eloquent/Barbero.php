@@ -28,4 +28,14 @@ class Barbero extends Model
     {
         return $this->belongsToMany(Servicio::class, 'barbero_servicio', 'barbero_id', 'servicio_id');
     }
+
+    /**
+     * Devuelve el horario base para un día específico de la semana (0=Domingo, 6=Sábado)
+     */
+    public function horarioBaseParaDia(int $diaSemana)
+    {
+        return $this->hasMany(HorarioBase::class, 'barbero_id')
+            ->where('dia_semana', $diaSemana)
+            ->get();
+    }
 }
