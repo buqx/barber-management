@@ -9,6 +9,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VentaDetalle extends Model
 {
+
+
+    protected static function booted()
+    {
+        static::created(function ($detalle) {
+            // Suponiendo que cada servicio tiene un producto asociado (ajustar según tu lógica)
+            $productoId = $detalle->servicio->producto_id ?? null;
+            if ($productoId) {
+                $producto = Producto::find($productoId);
+                if ($producto && $producto->stock_actual > 0) {
+                    $producto->decrement('stock_actual');
+                }
+            }
+        });
+    }
     use HasUuids, BelongsToTenant;
 
     protected $table = 'venta_detalles';

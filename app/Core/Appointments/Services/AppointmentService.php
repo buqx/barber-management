@@ -1,26 +1,39 @@
-use App\Notifications\AppointmentBooked;
-use Illuminate\Support\Facades\Notification;
 <?php
-
 declare(strict_types=1);
 
 namespace App\Core\Appointments\Services;
 
+use App\Notifications\AppointmentBooked;
+use Illuminate\Support\Facades\Notification;
 use App\Core\Appointments\Contracts\AppointmentRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\Barbero;
 use App\Infrastructure\Persistence\Eloquent\Servicio;
 use App\Infrastructure\Persistence\Eloquent\HorarioBase;
 use App\Infrastructure\Persistence\Eloquent\BloqueoExcepcion;
 use Illuminate\Support\Carbon;
+
 use Illuminate\Support\Collection;
 
 class AppointmentService
+{
 
     /**
      * Guarda una cita y dispara la notificación.
      */
     public function bookAppointment($appointmentEntity)
     {
+        // Validar que el slot sigue disponible justo antes de guardar (race condition)
+        $barberId = $appointmentEntity->barberoId;
+        $serviceIds = $appointmentEntity->serviceIds;
+        $date = new Carbon($appointmentEntity->inicioAt);
+        $available = $this->getAvailableWindows($barberId, $serviceIds, $date);
+        $slotFound = $available->first(function($slot) use ($appointmentEntity) {
+            return $slot['inicio'] === (new Carbon($appointmentEntity->inicioAt))->format('H:i')
+                && $slot['fin'] === (new Carbon($appointmentEntity->finAt))->format('H:i');
+        });
+        if (!$slotFound) {
+            throw new \Exception('El horario seleccionado ya no está disponible.');
+        }
         $appointment = $this->appointmentRepository->save($appointmentEntity);
         // Notificar al cliente (o barbero, según lógica de negocio)
         if ($appointment && $appointment->cliente) {
@@ -28,7 +41,6 @@ class AppointmentService
         }
         return $appointment;
     }
-{
     public function __construct(
         protected AppointmentRepositoryInterface $appointmentRepository
     ) {}

@@ -12,7 +12,10 @@ class IdentifyTenant
     public function handle(Request $request, Closure $next)
     {
         $slug = $request->route('tenant');
-        $barberia = Barberia::where('slug', $slug)->firstOrFail();
+        $barberia = Barberia::where('slug', $slug)->first();
+        if (!$barberia) {
+            abort(404, 'Barbería no encontrada');
+        }
         App::singleton('tenant', fn () => $barberia);
         return $next($request);
     }
