@@ -1,5 +1,18 @@
+const footerNavItems: NavItem[] = [
+    {
+        title: 'Repository',
+        href: 'https://github.com/laravel/react-starter-kit',
+        icon: FolderGit2,
+    },
+    {
+        title: 'Documentation',
+        href: 'https://laravel.com/docs/starter-kits#react',
+        icon: BookOpen,
+    },
+];
 import { Link } from '@inertiajs/react';
 import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Building, User, Scissors, Users, Calendar, DollarSign, ShoppingBag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -22,18 +35,95 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
-];
-
-const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
+        title: 'Barberías',
+        href: '/barberias',
+        icon: Building,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Barberos',
+        href: '/barberos',
+        icon: User,
+    },
+    {
+        title: 'Servicios',
+        href: '/servicios',
+        icon: Scissors,
+    },
+    {
+        title: 'Clientes',
+        href: '/clientes',
+        icon: Users,
+    },
+    {
+        title: 'Citas',
+        href: '/citas',
+        icon: Calendar,
+    },
+    {
+        title: 'Ventas',
+        href: '/ventas',
+        icon: DollarSign,
+    },
+    {
+        title: 'Productos',
+        href: '/productos',
+        icon: ShoppingBag,
+    },
+    {
+        title: 'Perfil',
+        href: '/settings/profile',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Contrase\u00f1a',
+        href: '/settings/password',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Apariencia',
+        href: '/settings/appearance',
+        icon: LayoutGrid,
+    },
+    {
+        title: '2FA',
+        href: '/settings/two-factor',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Login',
+        href: '/auth/login',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Registro',
+        href: '/auth/register',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Recuperar contrase\u00f1a',
+        href: '/auth/forgot-password',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Verificar email',
+        href: '/auth/verify-email',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Confirmar contrase\u00f1a',
+        href: '/auth/confirm-password',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Desaf\u00edo 2FA',
+        href: '/auth/two-factor-challenge',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Reset password',
+        href: '/auth/reset-password',
+        icon: LayoutGrid,
     },
 ];
 

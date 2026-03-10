@@ -15,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Registrar el binding 'files' para compatibilidad legacy
+        $this->app->singleton('files', function ($app) {
+            return new \Illuminate\Filesystem\Filesystem;
+        });
     }
 
     /**
