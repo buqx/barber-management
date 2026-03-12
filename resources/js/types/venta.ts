@@ -1,7 +1,9 @@
 export interface Venta {
-  id: number;
-  clienteId: number;
-  clienteNombre: string;
+  id: string;
+  barberia_id: string;
+  cliente_id: string;
   total: number;
-  fecha: string;
+  utilidad_neta: number | null;
+  created_at: string;
+  updated_at: string;
 }

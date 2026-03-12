@@ -1,3 +1,10 @@
 export type * from './auth';
 export type * from './navigation';
 export type * from './ui';
+export type * from './barberia';
+export type * from './barbero';
+export type * from './cita';
+export type * from './cliente';
+export type * from './servicio';
+export type * from './venta';
+export type * from './producto';

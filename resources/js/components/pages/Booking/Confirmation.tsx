@@ -30,11 +30,11 @@ export const BookingConfirmation: React.FC<ConfirmationProps> = ({ barbero, fech
     post("/booking/confirm", {
       onSuccess: () => {
         setSuccess(true);
-        toast({ title: "¡Cita confirmada!", description: "Recibirás un correo de confirmación." });
+        toast("¡Cita confirmada!", { description: "Recibirás un correo de confirmación." });
         reset();
       },
       onError: (err) => {
-        toast({ title: "Error", description: err?.message || "No se pudo confirmar la cita." });
+        toast.error("Error", { description: err?.message || "No se pudo confirmar la cita." });
       },
     });
   };

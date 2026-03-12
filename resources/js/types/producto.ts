@@ -1,6 +1,9 @@
 export interface Producto {
-  id: number;
+  id: string;
   nombre: string;
-  precio: number;
-  stock: number;
+  stock_actual: number;
+  precio_costo: number | null;
+  precio_venta: number;
+  created_at: string;
+  updated_at: string;
 }

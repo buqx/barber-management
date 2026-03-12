@@ -1,6 +1,11 @@
 export interface Barberia {
-  id: number;
+  id: string;
   nombre: string;
-  direccion: string;
-  telefono: string;
+  slug: string;
+  telefono: string | null;
+  email: string | null;
+  moneda: string;
+  timezone: string;
+  created_at: string;
+  updated_at: string;
 }
