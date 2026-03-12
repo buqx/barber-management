@@ -12,7 +12,7 @@ const footerNavItems: NavItem[] = [
 ];
 import { Link } from '@inertiajs/react';
 import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
-import { Building, User, Scissors, Users, Calendar, CalendarDays, DollarSign, ShoppingBag } from 'lucide-react';
+import { Building, User, Scissors, Users, Calendar, CalendarDays, DollarSign, ShoppingBag, Settings } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -27,108 +27,121 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const navigationItems: NavGroup[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        items: [
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+            },
+        ],
     },
     {
-        title: 'Barberías',
-        href: '/barberias',
-        icon: Building,
+        title: 'Operación',
+        items: [
+            {
+                title: 'Agenda y Citas',
+                href: '/agenda',
+                icon: CalendarDays,
+                submenu: [
+                    {
+                        title: 'Agenda',
+                        href: '/agenda',
+                        icon: CalendarDays,
+                    },
+                    {
+                        title: 'Citas',
+                        href: '/citas',
+                        icon: Calendar,
+                    },
+                ],
+            },
+            {
+                title: 'Ventas',
+                href: '/ventas',
+                icon: DollarSign,
+                submenu: [
+                    {
+                        title: 'Ventas',
+                        href: '/ventas',
+                        icon: DollarSign,
+                    },
+                    {
+                        title: 'Productos',
+                        href: '/productos',
+                        icon: ShoppingBag,
+                    },
+                ],
+            },
+        ],
     },
     {
-        title: 'Barberos',
-        href: '/barberos',
-        icon: User,
+        title: 'Administración',
+        items: [
+            {
+                title: 'Catálogos',
+                href: '/barberias',
+                icon: Building,
+                submenu: [
+                    {
+                        title: 'Barberías',
+                        href: '/barberias',
+                        icon: Building,
+                    },
+                    {
+                        title: 'Barberos',
+                        href: '/barberos',
+                        icon: User,
+                    },
+                    {
+                        title: 'Servicios',
+                        href: '/servicios',
+                        icon: Scissors,
+                    },
+                    {
+                        title: 'Clientes',
+                        href: '/clientes',
+                        icon: Users,
+                    },
+                ],
+            },
+        ],
     },
     {
-        title: 'Servicios',
-        href: '/servicios',
-        icon: Scissors,
-    },
-    {
-        title: 'Clientes',
-        href: '/clientes',
-        icon: Users,
-    },
-    {
-        title: 'Citas',
-        href: '/citas',
-        icon: Calendar,
-    },
-    {
-        title: 'Agenda',
-        href: '/agenda',
-        icon: CalendarDays,
-    },
-    {
-        title: 'Ventas',
-        href: '/ventas',
-        icon: DollarSign,
-    },
-    {
-        title: 'Productos',
-        href: '/productos',
-        icon: ShoppingBag,
-    },
-    {
-        title: 'Perfil',
-        href: '/settings/profile',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Contrase\u00f1a',
-        href: '/settings/password',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Apariencia',
-        href: '/settings/appearance',
-        icon: LayoutGrid,
-    },
-    {
-        title: '2FA',
-        href: '/settings/two-factor',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Login',
-        href: '/auth/login',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Registro',
-        href: '/auth/register',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Recuperar contrase\u00f1a',
-        href: '/auth/forgot-password',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Verificar email',
-        href: '/auth/verify-email',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Confirmar contrase\u00f1a',
-        href: '/auth/confirm-password',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Desaf\u00edo 2FA',
-        href: '/auth/two-factor-challenge',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Reset password',
-        href: '/auth/reset-password',
-        icon: LayoutGrid,
+        title: 'Configuración',
+        items: [
+            {
+                title: 'Mi cuenta',
+                href: '/settings/profile',
+                icon: Settings,
+                submenu: [
+                    {
+                        title: 'Perfil',
+                        href: '/settings/profile',
+                        icon: Settings,
+                    },
+                    {
+                        title: 'Contraseña',
+                        href: '/settings/password',
+                        icon: Settings,
+                    },
+                    {
+                        title: 'Apariencia',
+                        href: '/settings/appearance',
+                        icon: Settings,
+                    },
+                    {
+                        title: '2FA',
+                        href: '/settings/two-factor',
+                        icon: Settings,
+                    },
+                ],
+            },
+        ],
     },
 ];
 
@@ -148,7 +161,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navigationItems} />
             </SidebarContent>
 
             <SidebarFooter>
