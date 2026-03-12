@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentBloqueoExcepcionRepository implements BloqueoExcepcionRepositoryInterface
 {
+    public function findByBarbero(string $barberoId): Collection
+    {
+        return BloqueoExcepcion::where('barbero_id', $barberoId)
+            ->orderBy('fecha_inicio')
+            ->get();
+    }
+
     public function findForBarberoOnDate(string $barberoId, string $date): Collection
     {
         return BloqueoExcepcion::where('barbero_id', $barberoId)

@@ -4,10 +4,10 @@ import { PageHeader } from '@/components/navigation';
 import { InfoField } from '@/components/primitives';
 import { Card, CardContent, CardHeader, CardTitle, Separator } from '@/components/ui';
 import { index, show } from '@/routes/ventas';
-import type { BreadcrumbItem, Venta } from '@/types';
+import type { BreadcrumbItem, Venta, VentaDetalle } from '@/types';
 
 interface Props {
-    venta: Venta;
+    venta: Venta & { detalles?: VentaDetalle[] };
 }
 
 export default function VentaShow({ venta }: Props) {
@@ -32,6 +32,34 @@ export default function VentaShow({ venta }: Props) {
                             <InfoField label="Fecha" value={new Date(venta.created_at).toLocaleString('es-CO')} />
                             <InfoField label="ID Cliente" value={venta.cliente_id} />
                         </div>
+                        {venta.detalles && venta.detalles.length > 0 && (
+                            <>
+                                <Separator />
+                                <div>
+                                    <p className="text-sm font-semibold mb-2">Servicios incluidos</p>
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b">
+                                                <th className="text-left py-2 font-medium">Servicio</th>
+                                                <th className="text-right py-2 font-medium">Precio venta</th>
+                                                <th className="text-right py-2 font-medium">Precio costo</th>
+                                                <th className="text-right py-2 font-medium">Utilidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {venta.detalles.map((d) => (
+                                                <tr key={d.id} className="border-b last:border-0">
+                                                    <td className="py-2">{d.servicio?.nombre ?? d.servicio_id}</td>
+                                                    <td className="py-2 text-right">${d.precio_venta.toLocaleString()}</td>
+                                                    <td className="py-2 text-right">${d.precio_costo.toLocaleString()}</td>
+                                                    <td className="py-2 text-right">${d.utilidad_neta.toLocaleString()}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </>
+                        )}
                         <Separator />
                         <InfoField label="ID" value={venta.id} />
                     </CardContent>
@@ -40,3 +68,4 @@ export default function VentaShow({ venta }: Props) {
         </AppLayout>
     );
 }
+

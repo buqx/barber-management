@@ -2,7 +2,6 @@
 
 namespace App\Domain\Configuracion\Horarios\Models;
 
-use App\Domain\Shared\Tenancy\BelongsToTenant;
 use App\Domain\Personal\Barberos\Models\Barbero;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BloqueoExcepcion extends Model
 {
-    use HasUuids, BelongsToTenant;
+    use HasUuids;
 
     protected $table = 'bloqueos_excepciones';
     protected $keyType = 'string';

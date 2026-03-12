@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Personal\Barberos\Http\Controllers\BarberoController;
+use App\Domain\Personal\Barberos\Http\Controllers\BarberoServicioController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('barberos')->name('barberos.')
@@ -12,4 +13,5 @@ Route::middleware(['auth', 'verified'])->prefix('barberos')->name('barberos.')
     Route::get('/{id}/edit', [BarberoController::class, 'edit'])->name('edit');
     Route::put('/{id}', [BarberoController::class, 'update'])->name('update');
     Route::delete('/{id}', [BarberoController::class, 'destroy'])->name('destroy');
+    Route::post('/{barberoId}/servicios', [BarberoServicioController::class, 'sync'])->name('syncServicios');
 });

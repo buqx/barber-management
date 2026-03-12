@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentHorarioBaseRepository implements HorarioBaseRepositoryInterface
 {
+    public function findByBarbero(string $barberoId): Collection
+    {
+        return HorarioBase::where('barbero_id', $barberoId)
+            ->orderBy('dia_semana')
+            ->get();
+    }
+
     public function findByBarberoAndDay(string $barberoId, int $diaSemana): Collection
     {
         return HorarioBase::where('barbero_id', $barberoId)

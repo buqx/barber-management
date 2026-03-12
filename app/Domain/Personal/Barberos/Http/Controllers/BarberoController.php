@@ -2,6 +2,9 @@
 
 namespace App\Domain\Personal\Barberos\Http\Controllers;
 
+use App\Domain\Catalogo\Servicios\Services\ServicioService;
+use App\Domain\Configuracion\Horarios\Repositories\Contracts\BloqueoExcepcionRepositoryInterface;
+use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseRepositoryInterface;
 use App\Domain\Personal\Barberos\Http\Requests\BarberoRequest;
 use App\Domain\Personal\Barberos\Services\BarberoService;
 use Illuminate\Routing\Controller;
@@ -12,6 +15,9 @@ class BarberoController extends Controller
 {
     public function __construct(
         protected BarberoService $barberoService,
+        protected HorarioBaseRepositoryInterface $horarioRepository,
+        protected BloqueoExcepcionRepositoryInterface $bloqueoRepository,
+        protected ServicioService $servicioService,
     ) {}
 
     public function index(): Response
@@ -34,8 +40,14 @@ class BarberoController extends Controller
 
     public function show(string $id): Response
     {
+        $barbero = $this->barberoService->getById($id);
+
         return Inertia::render('barberos/Show', [
-            'barbero' => $this->barberoService->getById($id),
+            'barbero'              => $barbero,
+            'horarios'             => $this->horarioRepository->findByBarbero($id),
+            'bloqueos'             => $this->bloqueoRepository->findByBarbero($id),
+            'serviciosDisponibles' => $this->servicioService->getAll(),
+            'serviciosAsignados'   => $barbero->servicios->pluck('id'),
         ]);
     }
 

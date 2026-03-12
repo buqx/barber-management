@@ -10,7 +10,7 @@ trait BelongsToTenant
     public static function bootBelongsToTenant(): void
     {
         static::addGlobalScope('tenant', function (Builder $builder) {
-            $tenant = App::make('tenant', fn () => null);
+            $tenant = App::bound('tenant') ? App::make('tenant') : null;
             if ($tenant) {
                 $builder->where('barberia_id', $tenant->id);
             }

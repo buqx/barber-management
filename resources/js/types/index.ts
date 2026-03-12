@@ -8,3 +8,6 @@ export type * from './cliente';
 export type * from './servicio';
 export type * from './venta';
 export type * from './producto';
+export type * from './horario';
+export type * from './bloqueo';
+export type * from './venta-detalle';

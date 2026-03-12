@@ -22,8 +22,14 @@ class VentaController extends Controller
 
     public function show(string $id): Response
     {
+        $venta = $this->ventaService->getById($id);
+
+        if ($venta) {
+            $venta->load('detalles.servicio');
+        }
+
         return Inertia::render('ventas/Show', [
-            'venta' => $this->ventaService->getById($id),
+            'venta' => $venta,
         ]);
     }
 }
