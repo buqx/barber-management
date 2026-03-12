@@ -17,7 +17,7 @@ class ClienteRequest extends FormRequest
             'nombre'      => ['required', 'string', 'max:255'],
             'telefono'    => ['nullable', 'string', 'max:30'],
             'email'       => ['nullable', 'email', 'max:255'],
-            'barberia_id' => ['required', 'uuid'],
+            'barberia_id' => ['required', 'uuid', 'exists:barberias,id'],
         ];
     }
 }

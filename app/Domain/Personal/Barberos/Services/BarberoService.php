@@ -36,6 +36,7 @@ class BarberoService
                 'email' => $data['email'],
                 'password' => $data['cedula'],
                 'avatar' => $avatarPath,
+                'is_admin' => (bool) ($data['es_dueno'] ?? false),
             ]);
 
             unset($data['foto']);
@@ -72,12 +73,14 @@ class BarberoService
                     'email' => $data['email'],
                     'password' => $data['cedula'],
                     'avatar' => $avatarPath,
+                    'is_admin' => (bool) ($data['es_dueno'] ?? false),
                 ]);
             } else {
                 $user->update([
                     'name' => $data['nombre'],
                     'email' => $data['email'],
                     'avatar' => $avatarPath,
+                    'is_admin' => (bool) ($data['es_dueno'] ?? false),
                 ]);
             }
 

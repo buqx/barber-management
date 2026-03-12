@@ -4,14 +4,18 @@ import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
 import { Avatar, AvatarFallback, AvatarImage, Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Checkbox } from '@/components/ui';
 import { index, create, store } from '@/routes/barberos';
-import type { BreadcrumbItem } from '@/types';
+import type { Barberia, BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Barberos', href: index.url() },
     { title: 'Nuevo', href: create.url() },
 ];
 
-export default function BarberoCreate() {
+interface Props {
+    barberias: Barberia[];
+}
+
+export default function BarberoCreate({ barberias }: Props) {
     const form = useForm({
         nombre: '',
         email: '',
@@ -102,13 +106,21 @@ export default function BarberoCreate() {
                                 {form.errors.cedula && <p className="text-sm text-destructive">{form.errors.cedula}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="barberia_id">ID Barbería *</Label>
-                                <Input
+                                <Label htmlFor="barberia_id">Barbería *</Label>
+                                <select
                                     id="barberia_id"
+                                    className="h-10 rounded-md border border-input bg-background px-3 text-sm"
                                     value={form.data.barberia_id}
                                     onChange={e => form.setData('barberia_id', e.target.value)}
                                     required
-                                />
+                                >
+                                    <option value="">Selecciona una barbería</option>
+                                    {barberias.map((barberia) => (
+                                        <option key={barberia.id} value={barberia.id}>
+                                            {barberia.nombre}
+                                        </option>
+                                    ))}
+                                </select>
                                 {form.errors.barberia_id && <p className="text-sm text-destructive">{form.errors.barberia_id}</p>}
                             </div>
                             <div className="grid gap-2">
@@ -130,6 +142,7 @@ export default function BarberoCreate() {
                                 />
                                 <Label htmlFor="es_dueno">Es dueño</Label>
                             </div>
+                            <p className="text-sm text-muted-foreground">Si activas “Es dueño”, el usuario del barbero tendrá permisos administrativos.</p>
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="activo"

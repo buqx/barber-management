@@ -2,6 +2,7 @@
 
 namespace App\Domain\Catalogo\Servicios\Http\Controllers;
 
+use App\Domain\Barberia\Gestion\Services\BarberiaService;
 use App\Domain\Catalogo\Servicios\Http\Requests\ServicioRequest;
 use App\Domain\Catalogo\Servicios\Services\ServicioService;
 use Illuminate\Routing\Controller;
@@ -12,6 +13,7 @@ class ServicioController extends Controller
 {
     public function __construct(
         protected ServicioService $servicioService,
+        protected BarberiaService $barberiaService,
     ) {}
 
     public function index(): Response
@@ -23,7 +25,9 @@ class ServicioController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('servicios/Create');
+        return Inertia::render('servicios/Create', [
+            'barberias' => $this->barberiaService->getAll(),
+        ]);
     }
 
     public function store(ServicioRequest $request)

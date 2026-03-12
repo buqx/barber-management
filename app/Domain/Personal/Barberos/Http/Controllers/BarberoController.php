@@ -3,6 +3,7 @@
 namespace App\Domain\Personal\Barberos\Http\Controllers;
 
 use App\Domain\Catalogo\Servicios\Services\ServicioService;
+use App\Domain\Barberia\Gestion\Services\BarberiaService;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\BloqueoExcepcionRepositoryInterface;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseRepositoryInterface;
 use App\Domain\Personal\Barberos\Http\Requests\BarberoRequest;
@@ -15,6 +16,7 @@ class BarberoController extends Controller
 {
     public function __construct(
         protected BarberoService $barberoService,
+        protected BarberiaService $barberiaService,
         protected HorarioBaseRepositoryInterface $horarioRepository,
         protected BloqueoExcepcionRepositoryInterface $bloqueoRepository,
         protected ServicioService $servicioService,
@@ -29,7 +31,9 @@ class BarberoController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('barberos/Create');
+        return Inertia::render('barberos/Create', [
+            'barberias' => $this->barberiaService->getAll(),
+        ]);
     }
 
     public function store(BarberoRequest $request)

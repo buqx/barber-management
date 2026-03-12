@@ -17,7 +17,7 @@ class ServicioRequest extends FormRequest
             'nombre'           => ['required', 'string', 'max:255'],
             'precio'           => ['required', 'numeric', 'min:0'],
             'duracion_minutos' => ['required', 'integer', 'min:1'],
-            'barberia_id'      => ['required', 'uuid'],
+            'barberia_id'      => ['required', 'uuid', 'exists:barberias,id'],
         ];
     }
 }
