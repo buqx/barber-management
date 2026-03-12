@@ -22,3 +22,4 @@ require app_path('Domain/Catalogo/Productos/Routes/productos.php');
 require app_path('Domain/Ventas/Gestion/Routes/ventas.php');
 require app_path('Domain/Settings/Perfil/Routes/settings.php');
 require app_path('Domain/Configuracion/Horarios/Routes/horarios.php');
+require app_path('Domain/Reservas/Citas/Routes/agenda.php');

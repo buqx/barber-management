@@ -9,4 +9,10 @@ export interface Cita {
   total_pagado: number | null;
   created_at: string;
   updated_at: string;
+  cliente?: {
+    id: string;
+    nombre: string;
+    email: string | null;
+    telefono: string | null;
+  } | null;
 }

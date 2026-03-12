@@ -23,6 +23,11 @@ class EloquentServicioRepository implements ServicioRepositoryInterface
         return (int) Servicio::whereIn('id', $ids)->sum('duracion_minutos');
     }
 
+    public function sumPrice(array $ids): float
+    {
+        return (float) Servicio::whereIn('id', $ids)->sum('precio');
+    }
+
     public function create(array $data): Servicio
     {
         return Servicio::create($data);

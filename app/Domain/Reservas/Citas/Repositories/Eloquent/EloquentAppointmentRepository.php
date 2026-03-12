@@ -12,6 +12,16 @@ use Illuminate\Support\Carbon;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
+    public function findAll(): Collection
+    {
+        return Appointment::orderByDesc('inicio_at')->get();
+    }
+
+    public function findById(string $id): ?Appointment
+    {
+        return Appointment::find($id);
+    }
+
     public function getOccupiedSlots(string $barberId, Carbon $date): Collection
     {
         return Appointment::where('barbero_id', $barberId)

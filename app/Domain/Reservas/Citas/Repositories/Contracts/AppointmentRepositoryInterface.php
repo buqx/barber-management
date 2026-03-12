@@ -11,6 +11,8 @@ use Illuminate\Support\Carbon;
 
 interface AppointmentRepositoryInterface
 {
+    public function findAll(): Collection;
+    public function findById(string $id): ?Appointment;
     public function getOccupiedSlots(string $barberId, Carbon $date): Collection;
     public function save(AppointmentEntity $appointment): Appointment;
 }

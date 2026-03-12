@@ -8,5 +8,6 @@ Route::prefix('{tenant}')
     ->middleware([IdentifyTenant::class])
     ->group(function () {
         Route::get('booking', [BookingController::class, 'showStep1'])->name('booking.step1');
-        Route::post('booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.checkAvailability');
+    Route::post('booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.checkAvailability');
+    Route::post('booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
     });
