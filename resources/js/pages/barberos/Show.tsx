@@ -4,6 +4,9 @@ import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
 import { InfoField, BoolBadge } from '@/components/primitives';
 import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
     Badge,
     Button,
     Card,
@@ -145,16 +148,26 @@ export default function BarberoShow({ barbero, horarios, bloqueos, serviciosDisp
                 {/* Info */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            {barbero.nombre}
-                            <BoolBadge value={barbero.activo} trueLabel="Activo" falseLabel="Inactivo" />
-                            {barbero.es_dueno && <Badge variant="secondary">Dueño</Badge>}
-                        </CardTitle>
+                        <div className="flex items-center gap-4">
+                            <Avatar className="h-20 w-20">
+                                <AvatarImage src={barbero.foto_url ?? undefined} alt={barbero.nombre} />
+                                <AvatarFallback>{barbero.nombre.slice(0, 2).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <CardTitle className="flex items-center gap-2">
+                                    {barbero.nombre}
+                                    <BoolBadge value={barbero.activo} trueLabel="Activo" falseLabel="Inactivo" />
+                                    {barbero.es_dueno && <Badge variant="secondary">Dueño</Badge>}
+                                </CardTitle>
+                                <p className="text-sm text-muted-foreground">Usuario vinculado: {barbero.email ?? '—'}</p>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent className="grid gap-4">
                         <div className="grid grid-cols-2 gap-4">
                             <InfoField label="Nombre" value={barbero.nombre} />
                             <InfoField label="Email" value={barbero.email} />
+                            <InfoField label="Cédula" value={barbero.cedula} />
                             <InfoField label="Comisión" value={barbero.comision_porcentaje != null ? `${barbero.comision_porcentaje}%` : null} />
                         </div>
                         <Separator />

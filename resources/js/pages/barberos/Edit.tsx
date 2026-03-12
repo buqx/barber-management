@@ -1,7 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Checkbox } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Checkbox } from '@/components/ui';
 import { index, show, edit, update } from '@/routes/barberos';
 import type { BreadcrumbItem, Barbero } from '@/types';
 
@@ -19,15 +20,31 @@ export default function BarberoEdit({ barbero }: Props) {
     const form = useForm({
         nombre: barbero.nombre,
         email: barbero.email ?? '',
+        cedula: barbero.cedula ?? '',
+        foto: null as File | null,
         barberia_id: barbero.barberia_id,
         es_dueno: barbero.es_dueno,
         comision_porcentaje: barbero.comision_porcentaje?.toString() ?? '',
         activo: barbero.activo,
     });
 
+    const [previewUrl, setPreviewUrl] = useState<string | null>(barbero.foto_url);
+
+    useEffect(() => {
+        if (!form.data.foto) {
+            setPreviewUrl(barbero.foto_url);
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(form.data.foto);
+        setPreviewUrl(objectUrl);
+
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [barbero.foto_url, form.data.foto]);
+
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        form.put(update.url(barbero.id));
+        form.put(update.url(barbero.id), { forceFormData: true });
     }
 
     return (
@@ -41,6 +58,22 @@ export default function BarberoEdit({ barbero }: Props) {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="flex flex-col gap-4">
+                            <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-4">
+                                <Avatar className="h-24 w-24">
+                                    <AvatarImage src={previewUrl ?? undefined} alt={barbero.nombre} />
+                                    <AvatarFallback>{barbero.nombre.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div className="grid gap-2 w-full">
+                                    <Label htmlFor="foto">Foto de perfil</Label>
+                                    <Input
+                                        id="foto"
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp"
+                                        onChange={e => form.setData('foto', e.target.files?.[0] ?? null)}
+                                    />
+                                    {form.errors.foto && <p className="text-sm text-destructive">{form.errors.foto}</p>}
+                                </div>
+                            </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="nombre">Nombre *</Label>
                                 <Input
@@ -52,13 +85,26 @@ export default function BarberoEdit({ barbero }: Props) {
                                 {form.errors.nombre && <p className="text-sm text-destructive">{form.errors.nombre}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">Email *</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={form.data.email}
                                     onChange={e => form.setData('email', e.target.value)}
+                                    required
                                 />
+                                {form.errors.email && <p className="text-sm text-destructive">{form.errors.email}</p>}
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="cedula">Cédula *</Label>
+                                <Input
+                                    id="cedula"
+                                    value={form.data.cedula}
+                                    onChange={e => form.setData('cedula', e.target.value)}
+                                    required
+                                />
+                                <p className="text-sm text-muted-foreground">La contraseña por defecto sólo se usa al crear el usuario inicial.</p>
+                                {form.errors.cedula && <p className="text-sm text-destructive">{form.errors.cedula}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="comision_porcentaje">Comisión (%)</Label>
