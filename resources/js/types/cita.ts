@@ -15,4 +15,9 @@ export interface Cita {
     email: string | null;
     telefono: string | null;
   } | null;
+  barbero?: {
+    id: string;
+    nombre: string;
+    email: string | null;
+  } | null;
 }

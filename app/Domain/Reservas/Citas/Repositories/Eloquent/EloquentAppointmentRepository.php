@@ -14,12 +14,15 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
     public function findAll(): Collection
     {
-        return Appointment::orderByDesc('inicio_at')->get();
+        return Appointment::with(['cliente', 'barbero'])
+            ->orderByDesc('inicio_at')
+            ->get();
     }
 
     public function findById(string $id): ?Appointment
     {
-        return Appointment::find($id);
+        return Appointment::with(['cliente', 'barbero', 'ventas'])
+            ->find($id);
     }
 
     public function getOccupiedSlots(string $barberId, Carbon $date): Collection

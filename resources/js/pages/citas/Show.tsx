@@ -1,9 +1,11 @@
 import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
 import { InfoField } from '@/components/primitives';
-import { Card, CardContent, CardHeader, CardTitle, Badge, Separator } from '@/components/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Separator } from '@/components/ui';
 import { index, show } from '@/routes/citas';
+import { create as createVenta } from '@/routes/ventas';
 import type { BreadcrumbItem, Cita } from '@/types';
 
 interface Props {
@@ -39,9 +41,15 @@ export default function CitaShow({ cita }: Props) {
                         <div className="grid grid-cols-2 gap-4">
                             <InfoField label="Inicio" value={new Date(cita.inicio_at).toLocaleString('es-CO')} />
                             <InfoField label="Fin" value={new Date(cita.fin_at).toLocaleString('es-CO')} />
-                            <InfoField label="ID Barbero" value={cita.barbero_id} />
-                            <InfoField label="ID Cliente" value={cita.cliente_id} />
+                            <InfoField label="Barbero" value={cita.barbero?.nombre ?? cita.barbero_id} />
+                            <InfoField label="Cliente" value={cita.cliente?.nombre ?? cita.cliente_id} />
                             <InfoField label="Total pagado" value={cita.total_pagado != null ? `$${cita.total_pagado.toLocaleString()}` : null} />
+                        </div>
+                        <Separator />
+                        <div className="flex gap-2">
+                            <Button onClick={() => router.visit(createVenta.url({ query: { cita_id: cita.id } }))}>
+                                Registrar venta
+                            </Button>
                         </div>
                         <Separator />
                         <InfoField label="ID" value={cita.id} />

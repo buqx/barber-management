@@ -6,8 +6,10 @@ use App\Domain\Shared\Tenancy\BelongsToTenant;
 use App\Domain\Barberia\Gestion\Models\Barberia;
 use App\Domain\Personal\Barberos\Models\Barbero;
 use App\Domain\Clientes\Gestion\Models\Cliente;
+use App\Domain\Ventas\Gestion\Models\Venta;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
@@ -35,5 +37,10 @@ class Appointment extends Model
     public function barberia(): BelongsTo
     {
         return $this->belongsTo(Barberia::class, 'barberia_id');
+    }
+
+    public function ventas(): HasMany
+    {
+        return $this->hasMany(Venta::class, 'cita_id');
     }
 }

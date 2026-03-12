@@ -16,25 +16,9 @@ class VentaDetalle extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     protected $fillable = [
-        'id', 'venta_id', 'servicio_id',
-        'precio_venta', 'precio_costo', 'utilidad_neta',
+        'id', 'venta_id', 'tipo_item', 'servicio_id', 'producto_id',
+        'descripcion', 'cantidad', 'precio_venta', 'precio_costo', 'subtotal', 'utilidad_neta',
     ];
-
-    protected static function booted(): void
-    {
-        static::created(function (self $detalle) {
-            /** @var Servicio|null $servicio */
-            $servicio   = $detalle->servicio;
-            $productoId = $servicio->producto_id ?? null;
-
-            if ($productoId) {
-                $producto = Producto::find($productoId);
-                if ($producto && $producto->stock_actual > 0) {
-                    $producto->decrement('stock_actual');
-                }
-            }
-        });
-    }
 
     public function venta(): BelongsTo
     {
@@ -44,5 +28,10 @@ class VentaDetalle extends Model
     public function servicio(): BelongsTo
     {
         return $this->belongsTo(Servicio::class, 'servicio_id');
+    }
+
+    public function producto(): BelongsTo
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
     }
 }

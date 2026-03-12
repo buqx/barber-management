@@ -10,12 +10,14 @@ class EloquentVentaRepository implements VentaRepositoryInterface
 {
     public function findById(string $id): ?Venta
     {
-        return Venta::with('detalles')->find($id);
+        return Venta::with(['cliente', 'barbero', 'cita', 'detalles.servicio', 'detalles.producto'])->find($id);
     }
 
     public function findAll(): Collection
     {
-        return Venta::with('detalles')->get();
+        return Venta::with(['cliente', 'barbero', 'cita', 'detalles'])
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function create(array $data): Venta
