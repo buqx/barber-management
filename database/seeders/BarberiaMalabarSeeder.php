@@ -36,12 +36,12 @@ class BarberiaMalabarSeeder extends Seeder
             'intervalo_citas' => 30,
         ]);
 
-        // 2. Crear el usuario para Juan Valencia
+        // 2. Crear el usuario para Juan Valencia (NO es admin global, es dueño de barbería)
         $user = User::create([
             'name' => 'Juan Valencia',
             'email' => 'juan.valencia@malabar.com',
             'password' => bcrypt('1002608'), // Contraseña = CC
-            'is_admin' => true, // Es dueño
+            'is_admin' => false, // No es admin global, es dueño de barbería
         ]);
 
         // 3. Crear el barbero (dueño)

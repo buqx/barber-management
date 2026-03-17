@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
@@ -16,12 +16,26 @@ interface Props {
 }
 
 export default function BarberoCreate({ barberias }: Props) {
+    const { auth } = usePage().props as {
+        auth: {
+            is_global_admin?: boolean;
+            is_owner?: boolean;
+            barberia_id?: string | null;
+        }
+    };
+
+    const isOwner = auth?.is_owner ?? false;
+    const isGlobalAdmin = auth?.is_global_admin ?? false;
+
+    // Si es owner, pre-seleccionar su barbería
+    const initialBarberiaId = isOwner && barberias.length === 1 ? barberias[0].id : '';
+
     const form = useForm({
         nombre: '',
         email: '',
         cedula: '',
         foto: null as File | null,
-        barberia_id: '',
+        barberia_id: initialBarberiaId,
         es_dueno: false,
         comision_porcentaje: '',
         activo: true,
@@ -95,36 +109,40 @@ export default function BarberoCreate({ barberias }: Props) {
                                 {form.errors.email && <p className="text-sm text-destructive">{form.errors.email}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="cedula">Cédula *</Label>
+                                <Label htmlFor="cedula">Cedula *</Label>
                                 <Input
                                     id="cedula"
                                     value={form.data.cedula}
                                     onChange={e => form.setData('cedula', e.target.value)}
                                     required
                                 />
-                                <p className="text-sm text-muted-foreground">La contraseña inicial del usuario será esta cédula.</p>
+                                <p className="text-sm text-muted-foreground">La contrasena inicial del usuario sera esta cedula.</p>
                                 {form.errors.cedula && <p className="text-sm text-destructive">{form.errors.cedula}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="barberia_id">Barbería *</Label>
+                                <Label htmlFor="barberia_id">Barberia *</Label>
                                 <select
                                     id="barberia_id"
                                     className="h-10 rounded-md border border-input bg-background px-3 text-sm"
                                     value={form.data.barberia_id}
                                     onChange={e => form.setData('barberia_id', e.target.value)}
                                     required
+                                    disabled={isOwner}
                                 >
-                                    <option value="">Selecciona una barbería</option>
+                                    <option value="" disabled={!isOwner}>Selecciona una barberia</option>
                                     {barberias.map((barberia) => (
                                         <option key={barberia.id} value={barberia.id}>
                                             {barberia.nombre}
                                         </option>
                                     ))}
                                 </select>
+                                {isOwner && (
+                                    <p className="text-sm text-muted-foreground">Solo puedes crear barberos para tu barberia.</p>
+                                )}
                                 {form.errors.barberia_id && <p className="text-sm text-destructive">{form.errors.barberia_id}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="comision_porcentaje">Comisión (%)</Label>
+                                <Label htmlFor="comision_porcentaje">Comision (%)</Label>
                                 <Input
                                     id="comision_porcentaje"
                                     type="number"
@@ -134,15 +152,19 @@ export default function BarberoCreate({ barberias }: Props) {
                                     onChange={e => form.setData('comision_porcentaje', e.target.value)}
                                 />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Checkbox
-                                    id="es_dueno"
-                                    checked={form.data.es_dueno}
-                                    onCheckedChange={v => form.setData('es_dueno', Boolean(v))}
-                                />
-                                <Label htmlFor="es_dueno">Es dueño</Label>
-                            </div>
-                            <p className="text-sm text-muted-foreground">Si activas “Es dueño”, el usuario del barbero tendrá permisos administrativos.</p>
+                            {isGlobalAdmin && (
+                                <>
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox
+                                            id="es_dueno"
+                                            checked={form.data.es_dueno}
+                                            onCheckedChange={v => form.setData('es_dueno', Boolean(v))}
+                                        />
+                                        <Label htmlFor="es_dueno">Es dueno</Label>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">Si activas "Es dueno", el usuario del barbero tendra permisos administrativos.</p>
+                                </>
+                            )}
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="activo"

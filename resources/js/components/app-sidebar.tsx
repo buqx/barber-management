@@ -92,6 +92,11 @@ export function AppSidebar() {
                         },
                     ],
                 },
+                {
+                    title: 'Barberos',
+                    href: '/barberos',
+                    icon: User,
+                },
             ],
         },
     ];

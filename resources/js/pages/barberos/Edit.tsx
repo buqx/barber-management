@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
@@ -11,6 +11,16 @@ interface Props {
 }
 
 export default function BarberoEdit({ barbero }: Props) {
+    const { auth } = usePage().props as {
+        auth: {
+            is_global_admin?: boolean;
+            is_owner?: boolean;
+            barberia_id?: string | null;
+        }
+    };
+
+    const isGlobalAdmin = auth?.is_global_admin ?? false;
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Barberos', href: index.url() },
         { title: barbero.nombre, href: show.url(barbero.id) },
@@ -117,14 +127,16 @@ export default function BarberoEdit({ barbero }: Props) {
                                     onChange={e => form.setData('comision_porcentaje', e.target.value)}
                                 />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Checkbox
-                                    id="es_dueno"
-                                    checked={form.data.es_dueno}
-                                    onCheckedChange={v => form.setData('es_dueno', Boolean(v))}
-                                />
-                                <Label htmlFor="es_dueno">Es dueño</Label>
-                            </div>
+                            {isGlobalAdmin && (
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        id="es_dueno"
+                                        checked={form.data.es_dueno}
+                                        onCheckedChange={v => form.setData('es_dueno', Boolean(v))}
+                                    />
+                                    <Label htmlFor="es_dueno">Es dueño</Label>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="activo"
