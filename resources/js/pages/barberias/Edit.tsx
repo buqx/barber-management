@@ -2,8 +2,15 @@ import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { PageHeader } from '@/components/navigation';
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/components/ui';
-import { index, show, edit, update } from '@/routes/barberias';
 import type { BreadcrumbItem, Barberia } from '@/types';
+
+interface FormData {
+    nombre: string;
+    slug: string;
+    telefono: string;
+    moneda: string;
+    timezone: string;
+}
 
 interface Props {
     barberia: Barberia;
@@ -11,30 +18,29 @@ interface Props {
 
 export default function BarberiaEdit({ barberia }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Barberías', href: index.url() },
-        { title: barberia.nombre, href: show.url(barberia.id) },
-        { title: 'Editar', href: edit.url(barberia.id) },
+        { title: 'Barberías', href: '/barberias' },
+        { title: barberia.nombre, href: `/barberias/${barberia.id}` },
+        { title: 'Editar', href: `/barberias/${barberia.id}/edit` },
     ];
 
-    const form = useForm({
+    const form = useForm<FormData>({
         nombre: barberia.nombre,
         slug: barberia.slug,
         telefono: barberia.telefono ?? '',
-        email: barberia.email ?? '',
         moneda: barberia.moneda,
         timezone: barberia.timezone,
     });
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        form.put(update.url(barberia.id));
+        form.put(`/barberias/${barberia.id}`);
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Editar ${barberia.nombre}`} />
             <div className="p-6 max-w-2xl">
-                <PageHeader title={`Editar ${barberia.nombre}`} backRoute={show(barberia.id)} />
+                <PageHeader title={`Editar ${barberia.nombre}`} backRoute={`/barberias/${barberia.id}`} />
                 <Card>
                     <CardHeader>
                         <CardTitle>Datos de la barbería</CardTitle>
@@ -66,15 +72,6 @@ export default function BarberiaEdit({ barberia }: Props) {
                                     id="telefono"
                                     value={form.data.telefono}
                                     onChange={e => form.setData('telefono', e.target.value)}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    value={form.data.email}
-                                    onChange={e => form.setData('email', e.target.value)}
                                 />
                             </div>
                             <div className="grid gap-2">

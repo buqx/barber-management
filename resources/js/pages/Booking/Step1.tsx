@@ -348,7 +348,6 @@ export default function BookingStep1({ barbers, services, barberia, bookingCerra
                                         style={{
                                             borderColor: selectedBarber === barber.id ? primaryColor : 'transparent',
                                             backgroundColor: selectedBarber === barber.id ? `${primaryColor}10` : '#f9fafb',
-                                            ringColor: primaryColor
                                         }}
                                     >
                                         <div
@@ -398,7 +397,6 @@ export default function BookingStep1({ barbers, services, barberia, bookingCerra
                                             style={{
                                                 borderColor: selectedServices.includes(service.id) ? primaryColor : '#e5e7eb',
                                                 backgroundColor: selectedServices.includes(service.id) ? `${primaryColor}05` : 'white',
-                                                ringColor: primaryColor
                                             }}
                                         >
                                             <span className="font-medium text-sm">{service.nombre}</span>
