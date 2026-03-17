@@ -17,6 +17,11 @@ class ProductoService
         return $this->productoRepository->findAll();
     }
 
+    public function getByBarberia(string $barberiaId): Collection
+    {
+        return Producto::where('barberia_id', $barberiaId)->get();
+    }
+
     public function getById(string $id): ?Producto
     {
         return $this->productoRepository->findById($id);

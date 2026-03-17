@@ -21,6 +21,11 @@ class BarberoService
         return $this->barberoRepository->findAll();
     }
 
+    public function getByBarberia(string $barberiaId): Collection
+    {
+        return Barbero::where('barberia_id', $barberiaId)->get();
+    }
+
     public function getById(string $id): ?Barbero
     {
         return $this->barberoRepository->findById($id);

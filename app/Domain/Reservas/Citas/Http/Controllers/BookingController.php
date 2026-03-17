@@ -26,9 +26,45 @@ class BookingController extends Controller
 
     public function showStep1(Request $request, string $tenant): Response
     {
+        $barberia = app('tenant');
+
+        if (!$barberia) {
+            abort(404, 'Barbería no encontrada');
+        }
+
+        // Verificar si el booking está habilitado
+        if (!$barberia->isBookingActivo()) {
+            return Inertia::render('Booking/Step1', [
+                'barbers'  => [],
+                'services' => [],
+                'barberia' => null,
+                'bookingCerrado' => true,
+            ]);
+        }
+
         return Inertia::render('Booking/Step1', [
             'barbers'  => $this->barberoRepository->findAll(),
             'services' => $this->servicioRepository->findAll(),
+            'barberia' => [
+                'id' => $barberia->id,
+                'nombre' => $barberia->nombre,
+                'slug' => $barberia->slug,
+                'logo_url' => $barberia->logo_url_final,
+                'banner_url' => $barberia->banner_url_final,
+                'color_primario' => $barberia->color_primario ?? '#1a1a1a',
+                'color_secundario' => $barberia->color_secundario ?? '#f5f5f5',
+                'descripcion' => $barberia->descripcion,
+                'telefono' => $barberia->telefono,
+                'direccion' => $barberia->direccion,
+                'facebook_url' => $barberia->facebook_url,
+                'instagram_url' => $barberia->instagram_url,
+                'horario_atencion' => $barberia->horario_atencion,
+                'booking_habilitado' => $barberia->booking_habilitado,
+                'dias_anticipacion' => $barberia->dias_anticipacion ?? 30,
+                'intervalo_citas' => $barberia->intervalo_citas ?? 30,
+                'moneda' => $barberia->moneda,
+            ],
+            'bookingCerrado' => false,
         ]);
     }
 

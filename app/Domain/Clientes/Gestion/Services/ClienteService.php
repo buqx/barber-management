@@ -17,6 +17,11 @@ class ClienteService
         return $this->clienteRepository->findAll();
     }
 
+    public function getByBarberia(string $barberiaId): Collection
+    {
+        return Cliente::where('barberia_id', $barberiaId)->get();
+    }
+
     public function getById(string $id): ?Cliente
     {
         return $this->clienteRepository->findById($id);

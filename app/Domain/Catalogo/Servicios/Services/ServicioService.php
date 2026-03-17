@@ -17,6 +17,11 @@ class ServicioService
         return $this->servicioRepository->findAll();
     }
 
+    public function getByBarberia(string $barberiaId): Collection
+    {
+        return Servicio::where('barberia_id', $barberiaId)->get();
+    }
+
     public function getById(string $id): ?Servicio
     {
         return $this->servicioRepository->findById($id);

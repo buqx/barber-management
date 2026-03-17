@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,12 +12,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear usuario admin
-        \App\Models\User::factory()->create([
-            'name' => 'Administrador',
-            'email' => 'admin@barber.com',
-            'password' => bcrypt('admin1234'), // Cambia la contraseña después
-            'is_admin' => true,
+        // Crear usuario admin global
+        User::firstOrCreate(
+            ['email' => 'admin@barber.com'],
+            [
+                'name' => 'Administrador',
+                'password' => bcrypt('admin1234'),
+                'is_admin' => true,
+            ]
+        );
+
+        // Ejecutar seeder de Barbería Malabar
+        $this->call([
+            BarberiaMalabarSeeder::class,
         ]);
     }
 }
