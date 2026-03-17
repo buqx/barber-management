@@ -146,7 +146,7 @@ npm run dev
 
 ## 7) Módulos funcionales incluidos
 
-- Barberías
+- Barberías (configuración multi-tenant)
 - Barberos
 - Clientes
 - Servicios
@@ -154,6 +154,7 @@ npm run dev
 - Citas
 - Agenda (vista operativa por barbero)
 - Ventas
+- Booking público (URL por slug: /{slug}/booking)
 
 ---
 
@@ -166,11 +167,30 @@ Al crear un barbero:
 - Se crea también su usuario de acceso con:
   - email del barbero
   - contraseña inicial = cédula
-- Si marcas Es dueño:
+- Si marcas Es dueño (solo admin global):
   - barbero.es_dueno = true
-  - usuario.is_admin = true
+  - usuario.is_admin = false (no es admin global, solo dueño de su barbería)
 
-La barbería del dueño corresponde al barberia_id seleccionado en el formulario.
+La barbería del due&ntilde;o corresponde al barberia_id seleccionado en el formulario.
+
+### Permisos por rol
+
+- **Admin global** (is_admin = true): Ve todas las barberías, puede crear/editar/eliminar cualquier recurso
+- **Dueño** (es_dueno = true, is_admin = false): Solo ve y gestiona recursos de su barbería
+- **Barbero** (es_dueno = false): Accede a agenda y ventas de su barbería
+
+### Seeders de prueba
+
+Para crear datos de prueba:
+
+```bash
+php artisan db:seed --class=BarberiaMalabarSeeder
+```
+
+Esto crea:
+- Barbería Malabar
+- Usuario owner: juan.valencia@malabar.com / 1002608
+- Servicios y clientes de ejemplo
 
 ### Formularios con barbería
 
