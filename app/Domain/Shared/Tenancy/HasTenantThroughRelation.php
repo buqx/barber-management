@@ -4,6 +4,7 @@ namespace App\Domain\Shared\Tenancy;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Trait for models that inherit tenant from a related model
@@ -20,7 +21,13 @@ trait HasTenantThroughRelation
     public static function bootHasTenantThroughRelation(): void
     {
         static::addGlobalScope('tenant', function (Builder $builder) {
-            $tenant = self::getCurrentTenant();
+            // Solo aplicar el filtro si hay un tenant configurado
+            // (para rutas públicas de booking)
+            if (!App::bound('tenant')) {
+                return;
+            }
+
+            $tenant = App::make('tenant');
 
             if ($tenant) {
                 // Filter through the parent relation (barbero)
