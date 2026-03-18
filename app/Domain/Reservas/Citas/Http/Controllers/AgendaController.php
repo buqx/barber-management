@@ -5,6 +5,7 @@ namespace App\Domain\Reservas\Citas\Http\Controllers;
 use App\Domain\Catalogo\Servicios\Repositories\Contracts\ServicioRepositoryInterface;
 use App\Domain\Clientes\Gestion\Models\Cliente;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseRepositoryInterface;
+use App\Domain\Configuracion\Horarios\Repositories\Contracts\TurnoFijoRepositoryInterface;
 use App\Domain\Personal\Barberos\Models\Barbero;
 use App\Domain\Reservas\Citas\Entities\AppointmentEntity;
 use App\Domain\Reservas\Citas\Http\Requests\AgendaStoreRequest;
@@ -21,9 +22,10 @@ use Inertia\Response;
 class AgendaController extends Controller
 {
     public function __construct(
-        protected AppointmentService             $appointmentService,
-        protected ServicioRepositoryInterface    $servicioRepository,
-        protected HorarioBaseRepositoryInterface $horarioRepository,
+        protected AppointmentService              $appointmentService,
+        protected ServicioRepositoryInterface     $servicioRepository,
+        protected HorarioBaseRepositoryInterface   $horarioRepository,
+        protected TurnoFijoRepositoryInterface     $turnoFijoRepository,
     ) {}
 
     public function index(Request $request): Response
@@ -51,6 +53,8 @@ class AgendaController extends Controller
                 ->with('cliente')
                 ->orderBy('inicio_at')
                 ->get();
+            // Get fixed schedules for this day
+            $turnosFijos = $this->turnoFijoRepository->findByBarberoAndDay($barbero->id, $diaSemana);
             // Show only services this barbero offers (fallback to all if none assigned)
             $servicios = $barbero->servicios->isEmpty()
                 ? $this->servicioRepository->findAll()
@@ -62,6 +66,7 @@ class AgendaController extends Controller
             'barberos'     => $barberos,
             'horarios'     => $horarios,
             'citas'        => $citas,
+            'turnosFijos'  => $turnosFijos ?? collect(),
             'servicios'    => $servicios,
             'selectedDate' => $selectedDate->toDateString(),
             'isMiAgenda'   => $miBarbero !== null && $miBarbero->id === $barberoId,

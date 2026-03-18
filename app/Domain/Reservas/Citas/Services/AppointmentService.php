@@ -11,6 +11,7 @@ use App\Domain\Reservas\Citas\Repositories\Contracts\AppointmentRepositoryInterf
 use App\Domain\Catalogo\Servicios\Repositories\Contracts\ServicioRepositoryInterface;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseRepositoryInterface;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\BloqueoExcepcionRepositoryInterface;
+use App\Domain\Configuracion\Horarios\Repositories\Contracts\TurnoFijoRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
@@ -22,6 +23,7 @@ class AppointmentService
         protected ServicioRepositoryInterface          $servicioRepository,
         protected HorarioBaseRepositoryInterface       $horarioBaseRepository,
         protected BloqueoExcepcionRepositoryInterface  $bloqueoExcepcionRepository,
+        protected TurnoFijoRepositoryInterface        $turnoFijoRepository,
     ) {}
 
     public function bookAppointment(AppointmentEntity $appointmentEntity): Appointment
@@ -67,6 +69,19 @@ class AppointmentService
 
         $bloqueos = $this->bloqueoExcepcionRepository->findForBarberoOnDate($barberId, $date->toDateString());
         $ocupados = $this->appointmentRepository->getOccupiedSlots($barberId, $date);
+
+        // Obtener turnos fijos del día
+        $turnosFijos = $this->turnoFijoRepository->findByBarberoAndDay($barberId, $diaSemana);
+        // Convertir turnos fijos a formato de ocupado
+        $turnosFijosOcupados = $turnosFijos->map(function ($tf) use ($date) {
+            $horaInicio = Carbon::parse($tf->hora_inicio)->format('H:i');
+            $duracion = $tf->duracion_total;
+            return (object) [
+                'inicio_at' => $date->copy()->setTimeFromTimeString($horaInicio)->toDateTimeString(),
+                'fin_at' => $date->copy()->setTimeFromTimeString($horaInicio)->addMinutes($duracion)->toDateTimeString(),
+            ];
+        });
+        $ocupados = $ocupados->merge($turnosFijosOcupados);
 
         $slots = collect();
         $step  = 15; // minutos

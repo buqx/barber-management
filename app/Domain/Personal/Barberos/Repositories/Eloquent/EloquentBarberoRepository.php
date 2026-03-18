@@ -18,6 +18,11 @@ class EloquentBarberoRepository implements BarberoRepositoryInterface
         return Barbero::all();
     }
 
+    public function findByBarberia(string $barberiaId): Collection
+    {
+        return Barbero::where('barberia_id', $barberiaId)->orderBy('nombre')->get();
+    }
+
     public function create(array $data): Barbero
     {
         return Barbero::create($data);

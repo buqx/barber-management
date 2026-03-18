@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(php artisan:*)",
+      "Bash(php -l app/Domain/Shared/Tenancy/BelongsToTenant.php)",
+      "Bash(php -l app/Domain/Shared/Tenancy/HasTenantThroughRelation.php)",
+      "Bash(php -l app/Domain/Shared/Tenancy/TenantManager.php)",
+      "Bash(php -l app/Domain/Catalogo/Productos/Models/Producto.php)",
+      "Bash(php -l app/Domain/Personal/Barberos/Models/Barbero.php)",
+      "Bash(php -l app/Domain/Clientes/Gestion/Models/Cliente.php)",
+      "Bash(php -l app/Domain/Catalogo/Servicios/Models/Servicio.php)",
+      "Bash(php -l app/Domain/Reservas/Citas/Models/Appointment.php)",
+      "Bash(php -l app/Domain/Ventas/ Gestion/Models/Venta.php)",
+      "Bash(php -l \"app/Domain/Ventas/Gestion/Models/Venta.php\")",
+      "Bash(php -l \"app/Domain/Configuracion/Horarios/Models/HorarioBase.php\")",
+      "Bash(php -l \"app/Domain/Configuracion/Horarios/Models/BloqueoExcepcion.php\")",
+      "Bash(php -l \"app/Domain/Barberia/Gestion/Http/Controllers/ConfiguracionBarberiaController.php\")",
+      "Bash(php -l \"app/Http/Middleware/ShareAuthData.php\")",
+      "Bash(php -l \"app/Domain/Personal/Barberos/Http/Controllers/BarberoController.php\")",
+      "Bash(php -l \"app/Domain/Clientes/Gestion/Http/Controllers/ClienteController.php\")",
+      "Bash(php -l \"app/Domain/Catalogo/Servicios/Http/Controllers/ServicioController.php\")",
+      "Bash(php -l \"app/Domain/Catalogo/Productos/Http/Controllers/ProductoController.php\")",
+      "Bash(php:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

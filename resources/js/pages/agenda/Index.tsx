@@ -32,11 +32,32 @@ interface Slot {
     fin: string;
 }
 
+interface TurnoFijo {
+    id: string;
+    barbero_id: string;
+    cliente_id: string;
+    dia_semana: number;
+    hora_inicio: string;
+    activo: boolean;
+    cliente?: {
+        id: string;
+        nombre: string;
+        email: string;
+    };
+    servicios?: Array<{
+        id: string;
+        nombre: string;
+        duracion_minutos: number;
+    }>;
+    duracion_total?: number;
+}
+
 interface Props {
     barbero: (Barbero & { servicios: Servicio[] }) | null;
     barberos: Barbero[];
     horarios: HorarioBase[];
     citas: Cita[];
+    turnosFijos: TurnoFijo[];
     servicios: Servicio[];
     selectedDate: string;
     isMiAgenda: boolean;
@@ -63,7 +84,7 @@ function formatTime(isoString: string): string {
     return new Date(isoString).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-export default function AgendaIndex({ barbero, barberos, horarios, citas, servicios, selectedDate, isMiAgenda }: Props) {
+export default function AgendaIndex({ barbero, barberos, horarios, citas, turnosFijos, servicios, selectedDate, isMiAgenda }: Props) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogStep, setDialogStep] = useState<1 | 2>(1);
     const [dialogDate, setDialogDate] = useState(selectedDate);
@@ -319,10 +340,39 @@ export default function AgendaIndex({ barbero, barberos, horarios, citas, servic
                                     <div className="flex flex-wrap gap-2">
                                         {horarios.map((h) => (
                                             <div key={h.id} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <span>{h.hora_inicio} – {h.hora_fin}</span>
+                                                <span>{h.hora_inicio} - {h.hora_fin}</span>
                                                 {h.almuerzo_inicio && (
-                                                    <span className="text-xs">(almuerzo {h.almuerzo_inicio}–{h.almuerzo_fin})</span>
+                                                    <span className="text-xs">(almuerzo {h.almuerzo_inicio}-{h.almuerzo_fin})</span>
                                                 )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Fixed schedules (Turnos Fijos) */}
+                        {turnosFijos.length > 0 && (
+                            <Card className="border-amber-200 bg-amber-50">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm flex items-center gap-2 text-amber-800">
+                                        <Clock className="h-4 w-4" />
+                                        Turnos fijos del día
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex flex-col gap-2">
+                                        {turnosFijos.filter(tf => tf.activo).map((tf) => (
+                                            <div key={tf.id} className="flex items-center justify-between text-sm bg-white rounded border p-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="h-4 w-4 text-amber-600" />
+                                                    <span className="font-mono font-medium">{tf.hora_inicio}</span>
+                                                    <span className="text-muted-foreground">
+                                                        - {tf.cliente?.nombre || 'Cliente'}
+                                                        {tf.servicios?.length ? ` (${tf.servicios.map(s => s.nombre).join(', ')})` : ''}
+                                                    </span>
+                                                </div>
+                                                <Badge variant="outline" className="text-xs">Fijo</Badge>
                                             </div>
                                         ))}
                                     </div>

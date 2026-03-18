@@ -18,6 +18,11 @@ class EloquentServicioRepository implements ServicioRepositoryInterface
         return Servicio::all();
     }
 
+    public function findByBarberia(string $barberiaId): Collection
+    {
+        return Servicio::where('barberia_id', $barberiaId)->orderBy('nombre')->get();
+    }
+
     public function sumDuration(array $ids): int
     {
         return (int) Servicio::whereIn('id', $ids)->sum('duracion_minutos');

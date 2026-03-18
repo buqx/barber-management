@@ -9,6 +9,7 @@ interface ClienteRepositoryInterface
 {
     public function findById(string $id): ?Cliente;
     public function findAll(): Collection;
+    public function findByBarberia(string $barberiaId): Collection;
     public function create(array $data): Cliente;
     public function update(string $id, array $data): bool;
     public function delete(string $id): bool;

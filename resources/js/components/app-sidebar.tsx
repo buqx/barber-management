@@ -12,7 +12,7 @@ const footerNavItems: NavItem[] = [
 ];
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
-import { Building, User, Scissors, Users, Calendar, CalendarDays, DollarSign, ShoppingBag, Settings } from 'lucide-react';
+import { Building, User, Scissors, Users, Calendar, CalendarDays, DollarSign, ShoppingBag, Settings, Clock } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -96,6 +96,11 @@ export function AppSidebar() {
                     title: 'Barberos',
                     href: '/barberos',
                     icon: User,
+                },
+                {
+                    title: 'Turnos Fijos',
+                    href: '/turnos-fijos',
+                    icon: Clock,
                 },
             ],
         },

@@ -18,6 +18,11 @@ class EloquentClienteRepository implements ClienteRepositoryInterface
         return Cliente::all();
     }
 
+    public function findByBarberia(string $barberiaId): Collection
+    {
+        return Cliente::where('barberia_id', $barberiaId)->orderBy('nombre')->get();
+    }
+
     public function create(array $data): Cliente
     {
         return Cliente::create($data);

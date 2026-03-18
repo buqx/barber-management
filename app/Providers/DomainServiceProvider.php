@@ -37,6 +37,8 @@ use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseReposito
 use App\Domain\Configuracion\Horarios\Repositories\Eloquent\EloquentHorarioBaseRepository;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\BloqueoExcepcionRepositoryInterface;
 use App\Domain\Configuracion\Horarios\Repositories\Eloquent\EloquentBloqueoExcepcionRepository;
+use App\Domain\Configuracion\Horarios\Repositories\Contracts\TurnoFijoRepositoryInterface;
+use App\Domain\Configuracion\Horarios\Repositories\Eloquent\EloquentTurnoFijoRepository;
 
 class DomainServiceProvider extends ServiceProvider
 {
@@ -51,5 +53,6 @@ class DomainServiceProvider extends ServiceProvider
         $this->app->bind(VentaRepositoryInterface::class, EloquentVentaRepository::class);
         $this->app->bind(HorarioBaseRepositoryInterface::class, EloquentHorarioBaseRepository::class);
         $this->app->bind(BloqueoExcepcionRepositoryInterface::class, EloquentBloqueoExcepcionRepository::class);
+        $this->app->bind(TurnoFijoRepositoryInterface::class, EloquentTurnoFijoRepository::class);
     }
 }
