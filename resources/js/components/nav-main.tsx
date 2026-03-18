@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavGroup, NavItem } from '@/types';
+import { motion } from 'framer-motion';
+import { StaggerContainer, AnimatedListItem } from '@/components/animations';
 
 function hasActiveDescendant(item: NavItem, isCurrentUrl: (href: NavItem['href'], currentUrl?: string, startsWith?: boolean) => boolean): boolean {
     if (isCurrentUrl(item.href, undefined, true)) {
@@ -22,10 +24,14 @@ function hasActiveDescendant(item: NavItem, isCurrentUrl: (href: NavItem['href']
     return (item.submenu ?? []).some((child) => hasActiveDescendant(child, isCurrentUrl));
 }
 
-function renderNavItems(items: NavItem[], isCurrentUrl: (href: NavItem['href'], currentUrl?: string, startsWith?: boolean) => boolean, level: number = 0) {
+function renderNavItems(
+    items: NavItem[],
+    isCurrentUrl: (href: NavItem['href'], currentUrl?: string, startsWith?: boolean) => boolean,
+    level: number = 0
+) {
     const isSubmenuLevel = level > 0;
 
-    return items.map((item) => {
+    return items.map((item, index) => {
         const hasSubmenu = Boolean(item.submenu && item.submenu.length > 0);
         const active = isCurrentUrl(item.href, undefined, true);
 
@@ -45,16 +51,23 @@ function renderNavItems(items: NavItem[], isCurrentUrl: (href: NavItem['href'], 
 
             return (
                 <SidebarMenuItem key={`${item.title}-${level}`}>
-                    <SidebarMenuButton
-                        asChild
-                        isActive={active}
-                        tooltip={{ children: item.title }}
+                    <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.15 }}
                     >
-                        <Link href={item.href} prefetch>
-                            {item.icon && <item.icon />}
-                            <span>{item.title}</span>
-                        </Link>
-                    </SidebarMenuButton>
+                        <SidebarMenuButton
+                            asChild
+                            isActive={active}
+                            tooltip={{ children: item.title }}
+                            className="transition-all duration-200 hover:bg-accent"
+                        >
+                            <Link href={item.href} prefetch>
+                                {item.icon && <item.icon />}
+                                <span>{item.title}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </motion.div>
                 </SidebarMenuItem>
             );
         }
@@ -66,10 +79,10 @@ function renderNavItems(items: NavItem[], isCurrentUrl: (href: NavItem['href'], 
                 <SidebarMenuSubItem key={`${item.title}-${level}`}>
                     <Collapsible defaultOpen={defaultOpen}>
                         <CollapsibleTrigger asChild>
-                            <SidebarMenuSubButton>
+                            <SidebarMenuSubButton className="transition-colors duration-200 hover:bg-accent">
                                 {item.icon && <item.icon />}
                                 <span>{item.title}</span>
-                                <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                                <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                             </SidebarMenuSubButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent className="group/collapsible" data-state={defaultOpen ? 'open' : 'closed'}>
@@ -86,10 +99,13 @@ function renderNavItems(items: NavItem[], isCurrentUrl: (href: NavItem['href'], 
             <SidebarMenuItem key={`${item.title}-${level}`}>
                 <Collapsible defaultOpen={defaultOpen} className="group/collapsible">
                     <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={{ children: item.title }}>
+                        <SidebarMenuButton
+                            tooltip={{ children: item.title }}
+                            className="transition-colors duration-200 hover:bg-accent"
+                        >
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
-                            <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                            <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                         </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -108,11 +124,25 @@ export function NavMain({ items = [] }: { items: NavGroup[] }) {
 
     return (
         <>
-            {items.map((group) => (
+            {items.map((group, groupIndex) => (
                 <SidebarGroup className="px-2 py-0" key={group.title}>
-                    <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                    <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: groupIndex * 0.1 }}
+                    >
+                        <SidebarGroupLabel className="text-xs font-medium text-muted-foreground tracking-wider uppercase">
+                            {group.title}
+                        </SidebarGroupLabel>
+                    </motion.div>
                     <SidebarMenu>
-                        {renderNavItems(group.items, isCurrentUrl)}
+                        <StaggerContainer stagger={0.05} delay={groupIndex * 0.1}>
+                            {renderNavItems(group.items, isCurrentUrl).map((item, index) => (
+                                <AnimatedListItem key={item.key as string}>
+                                    {item}
+                                </AnimatedListItem>
+                            ))}
+                        </StaggerContainer>
                     </SidebarMenu>
                 </SidebarGroup>
             ))}
