@@ -7,10 +7,11 @@ use App\Domain\Barberia\Gestion\Models\Barberia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Cliente extends Model
 {
-    use HasUuids, BelongsToTenant;
+    use HasUuids, BelongsToTenant, Notifiable;
 
     protected $table = 'clientes';
     protected $keyType = 'string';

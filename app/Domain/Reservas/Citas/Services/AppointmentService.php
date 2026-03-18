@@ -6,7 +6,6 @@ namespace App\Domain\Reservas\Citas\Services;
 
 use App\Domain\Reservas\Citas\Entities\AppointmentEntity;
 use App\Domain\Reservas\Citas\Models\Appointment;
-use App\Domain\Reservas\Citas\Notifications\AppointmentBooked;
 use App\Domain\Reservas\Citas\Repositories\Contracts\AppointmentRepositoryInterface;
 use App\Domain\Catalogo\Servicios\Repositories\Contracts\ServicioRepositoryInterface;
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\HorarioBaseRepositoryInterface;
@@ -14,7 +13,6 @@ use App\Domain\Configuracion\Horarios\Repositories\Contracts\BloqueoExcepcionRep
 use App\Domain\Configuracion\Horarios\Repositories\Contracts\TurnoFijoRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Notification;
 
 class AppointmentService
 {
@@ -46,10 +44,6 @@ class AppointmentService
         }
 
         $appointment = $this->appointmentRepository->save($appointmentEntity);
-
-        if ($appointment->cliente) {
-            Notification::send($appointment->cliente, new AppointmentBooked($appointment));
-        }
 
         return $appointment;
     }

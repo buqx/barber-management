@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface BarberoRepositoryInterface
 {
     public function findById(string $id): ?Barbero;
+    public function findBySlug(string $slug): ?Barbero;
     public function findAll(): Collection;
     public function findByBarberia(string $barberiaId): Collection;
     public function create(array $data): Barbero;

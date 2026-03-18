@@ -146,6 +146,10 @@ export default function BookingStep1({ barbers, services, barberia, bookingCerra
             setErrorMessage('Por favor completa todos los campos');
             return;
         }
+        if (!clienteTelefono || clienteTelefono.length !== 10) {
+            setErrorMessage('El teléfono debe tener exactamente 10 dígitos');
+            return;
+        }
 
         setConfirmLoading(true);
         setErrorMessage('');
@@ -197,7 +201,7 @@ export default function BookingStep1({ barbers, services, barberia, bookingCerra
         }
     };
 
-    const canBook = selectedBarber && selectedServices.length > 0 && selectedSlot && clienteNombre && clienteEmail;
+    const canBook = selectedBarber && selectedServices.length > 0 && selectedSlot && clienteNombre && clienteEmail && clienteTelefono && clienteTelefono.length === 10;
     const activeBarbers = barbers.filter(b => b.activo);
 
     // Booking closed state
@@ -542,13 +546,16 @@ export default function BookingStep1({ barbers, services, barberia, bookingCerra
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="telefono">Teléfono</Label>
+                                <Label htmlFor="telefono">Teléfono (10 dígitos) *</Label>
                                 <Input
                                     id="telefono"
                                     type="tel"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    maxLength={10}
                                     value={clienteTelefono}
-                                    onChange={(e) => setClienteTelefono(e.target.value)}
-                                    placeholder="+57 300 000 0000"
+                                    onChange={(e) => setClienteTelefono(e.target.value.replace(/\D/g, ''))}
+                                    placeholder="3000000000"
                                     className="mt-1"
                                 />
                             </div>

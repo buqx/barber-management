@@ -11,6 +11,7 @@ use App\Domain\Reservas\Citas\Entities\AppointmentEntity;
 use App\Domain\Reservas\Citas\Http\Requests\AgendaStoreRequest;
 use App\Domain\Reservas\Citas\Models\Appointment;
 use App\Domain\Reservas\Citas\Services\AppointmentService;
+use App\Jobs\SendAppointmentConfirmationToClient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -61,15 +62,23 @@ class AgendaController extends Controller
                 : $barbero->servicios;
         }
 
+        // Get all pending appointments (not depending on date)
+        $citasPendientes = Appointment::where('estado', 'pendiente')
+            ->with(['cliente', 'barbero', 'barberia'])
+            ->orderBy('inicio_at')
+            ->limit(50)
+            ->get();
+
         return Inertia::render('agenda/Index', [
-            'barbero'      => $barbero,
-            'barberos'     => $barberos,
-            'horarios'     => $horarios,
-            'citas'        => $citas,
-            'turnosFijos'  => $turnosFijos ?? collect(),
-            'servicios'    => $servicios,
-            'selectedDate' => $selectedDate->toDateString(),
-            'isMiAgenda'   => $miBarbero !== null && $miBarbero->id === $barberoId,
+            'barbero'        => $barbero,
+            'barberos'       => $barberos,
+            'horarios'       => $horarios,
+            'citas'          => $citas,
+            'citasPendientes' => $citasPendientes,
+            'turnosFijos'    => $turnosFijos ?? collect(),
+            'servicios'      => $servicios,
+            'selectedDate'   => $selectedDate->toDateString(),
+            'isMiAgenda'     => $miBarbero !== null && $miBarbero->id === $barberoId,
         ]);
     }
 
@@ -134,7 +143,14 @@ class AgendaController extends Controller
             'estado' => ['required', 'in:pendiente,confirmada,completada,cancelada'],
         ]);
 
-        Appointment::findOrFail($id)->update(['estado' => $request->estado]);
+        $appointment = Appointment::findOrFail($id);
+        $previousStatus = $appointment->estado;
+        $appointment->update(['estado' => $request->estado]);
+
+        // If status changed to 'confirmada', dispatch email to customer in background
+        if ($request->estado === 'confirmada' && $previousStatus !== 'confirmada') {
+            SendAppointmentConfirmationToClient::dispatch($appointment);
+        }
 
         return redirect()->back()->with('success', 'Estado actualizado.');
     }

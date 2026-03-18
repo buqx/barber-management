@@ -335,6 +335,54 @@ Antes de desplegar:
 
 ---
 
-## 15) Contacto técnico
+## 16) Configuración de correo electrónico
+
+### Gmail (App Password)
+
+Para enviar correos desde una cuenta Gmail, necesitas configurar una "App Password":
+
+1. Activa la verificación en 2 pasos en tu cuenta Google
+2. Ve a: https://myaccount.google.com/apppasswords
+3. Genera una nueva contraseña de aplicación
+4. Usa esa contraseña en MAIL_PASSWORD
+
+Configura tu archivo `.env`:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=tuemail@gmail.com
+MAIL_PASSWORD=xxxx xxxx xxxx xxxx
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="no-reply@tu-dominio.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+**Nota:** El `MAIL_FROM_ADDRESS` debe coincidir con el email de `MAIL_USERNAME` o usar un dominio propio verificado en Google Workspace.
+
+### Otros proveedores SMTP
+
+Simplemente cambia los valores según tu proveedor:
+
+```env
+# Outlook/Hotmail
+MAIL_HOST=smtp-mail.outlook.com
+MAIL_PORT=587
+
+# Yahoo
+MAIL_HOST=smtp.mail.yahoo.com
+MAIL_PORT=587
+
+# Mailtrap (desarrollo)
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=tu_usuario
+MAIL_PASSWORD=tu_password
+```
+
+---
+
+## 17) Contacto técnico
 
 Si el equipo define nuevas reglas de negocio (por ejemplo, dueño único por barbería, devoluciones de ventas, o control avanzado de inventario), se recomienda implementar primero la validación en capa Service y luego reflejarla en UI para mantener consistencia.

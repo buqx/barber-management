@@ -9,10 +9,12 @@ use App\Domain\Reservas\Citas\Entities\AppointmentEntity;
 use App\Domain\Clientes\Gestion\Models\Cliente;
 use App\Domain\Personal\Barberos\Repositories\Contracts\BarberoRepositoryInterface;
 use App\Domain\Catalogo\Servicios\Repositories\Contracts\ServicioRepositoryInterface;
+use App\Jobs\SendAppointmentNotificationToBarber;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,7 +26,7 @@ class BookingController extends Controller
         protected ServicioRepositoryInterface $servicioRepository,
     ) {}
 
-    public function showStep1(Request $request, string $tenant): Response
+    public function showStep1(Request $request, string $tenant, ?string $barberoSlug = null): Response
     {
         $barberia = app('tenant');
 
@@ -39,7 +41,22 @@ class BookingController extends Controller
                 'services' => [],
                 'barberia' => null,
                 'bookingCerrado' => true,
+                'barberoSeleccionado' => null,
             ]);
+        }
+
+        // Si hay un barbero específico, obtenerlo
+        $barberoSeleccionado = null;
+        if ($barberoSlug) {
+            $barbero = $this->barberoRepository->findBySlug($barberoSlug);
+            if ($barbero && $barbero->booking_publico) {
+                $barberoSeleccionado = [
+                    'id' => $barbero->id,
+                    'nombre' => $barbero->nombre,
+                    'foto_url' => $barbero->foto_url,
+                    'slug' => $barbero->slug,
+                ];
+            }
         }
 
         return Inertia::render('Booking/Step1', [
@@ -65,6 +82,7 @@ class BookingController extends Controller
                 'moneda' => $barberia->moneda,
             ],
             'bookingCerrado' => false,
+            'barberoSeleccionado' => $barberoSeleccionado,
         ]);
     }
 
@@ -88,18 +106,28 @@ class BookingController extends Controller
             return response()->json(['error' => 'Barberia context required'], 400);
         }
 
-        // Find or create client
-        $cliente = Cliente::firstOrCreate(
-            [
+        // Find or create client - buscar por email
+        $email = $validated['cliente_email'];
+
+        $cliente = Cliente::where('barberia_id', $barberia->id)
+            ->where('email', $email)
+            ->first();
+
+        // Crear o actualizar cliente
+        if (!$cliente) {
+            $cliente = Cliente::create([
                 'barberia_id' => $barberia->id,
-                'email' => $validated['cliente_email'],
-            ],
-            [
                 'nombre' => $validated['cliente_nombre'],
-                'email' => $validated['cliente_email'],
-                'telefono' => $validated['cliente_telefono'] ?? null,
-            ]
-        );
+                'email' => $email,
+                'telefono' => $validated['cliente_telefono'],
+            ]);
+        } else {
+            // Actualizar datos si el cliente existe
+            $cliente->update([
+                'nombre' => $validated['cliente_nombre'],
+                'telefono' => $validated['cliente_telefono'],
+            ]);
+        }
 
         // Calculate fin_at from date + slot_fin
         $fecha = Carbon::parse($validated['date']);
@@ -124,10 +152,14 @@ class BookingController extends Controller
 
         try {
             $appointment = $this->appointmentService->bookAppointment($appointmentEntity);
+
+            // Dispatch email to barber in the background (queue)
+            SendAppointmentNotificationToBarber::dispatch($appointment);
+
             return response()->json([
                 'success' => true,
                 'appointment' => $appointment,
-                'message' => 'Cita confirmada correctamente.',
+                'message' => 'Cita registrada. El barbero recibirá una notificación para confirmar tu cita.',
             ]);
         } catch (\Exception $e) {
             return response()->json([

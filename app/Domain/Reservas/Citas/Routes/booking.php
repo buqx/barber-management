@@ -7,7 +7,14 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('{tenant}')
     ->middleware([IdentifyTenant::class])
     ->group(function () {
+        // Booking general de la barbería
         Route::get('booking', [BookingController::class, 'showStep1'])->name('booking.step1');
-    Route::post('booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.checkAvailability');
-    Route::post('booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+
+        // Booking específico de un barbero
+        Route::get('booking/{barbero}', [BookingController::class, 'showStep1'])
+            ->name('booking.barbero');
+
+        // API routes
+        Route::post('booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.checkAvailability');
+        Route::post('booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
     });

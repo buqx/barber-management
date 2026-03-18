@@ -12,7 +12,7 @@ import {
     Label,
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui';
-import { ChevronLeft, ChevronRight, Clock, Plus, User } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, ChevronRight, Clock, Plus, User } from 'lucide-react';
 import { index as agendaIndex, checkDisponibilidad as checkDispoUrl, store as storeUrl, updateEstado as updateEstadoUrl } from '@/routes/agenda';
 import type { BreadcrumbItem, Barbero, Cita, HorarioBase, Servicio } from '@/types';
 
@@ -57,6 +57,7 @@ interface Props {
     barberos: Barbero[];
     horarios: HorarioBase[];
     citas: Cita[];
+    citasPendientes: Cita[];
     turnosFijos: TurnoFijo[];
     servicios: Servicio[];
     selectedDate: string;
@@ -84,7 +85,7 @@ function formatTime(isoString: string): string {
     return new Date(isoString).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-export default function AgendaIndex({ barbero, barberos, horarios, citas, turnosFijos, servicios, selectedDate, isMiAgenda }: Props) {
+export default function AgendaIndex({ barbero, barberos, horarios, citas, citasPendientes, turnosFijos, servicios, selectedDate, isMiAgenda }: Props) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogStep, setDialogStep] = useState<1 | 2>(1);
     const [dialogDate, setDialogDate] = useState(selectedDate);
@@ -134,7 +135,16 @@ export default function AgendaIndex({ barbero, barberos, horarios, citas, turnos
 
     // — Inline status change --------------------------------------------------
     const changeEstado = (citaId: string, newEstado: string) => {
-        router.patch(updateEstadoUrl(citaId).url, { estado: newEstado }, { preserveState: false });
+        router.patch(updateEstadoUrl(citaId).url, { estado: newEstado }, {
+            onSuccess: () => {
+                router.reload({ only: ['citasPendientes'] });
+            }
+        });
+    };
+
+    // Wrapper para botones de confirmar/rechazar
+    const updateEstado = (citaId: string, newEstado: string) => {
+        changeEstado(citaId, newEstado);
     };
 
     // — Slot availability check -----------------------------------------------
@@ -271,6 +281,61 @@ export default function AgendaIndex({ barbero, barberos, horarios, citas, turnos
                         </div>
                     )}
                 </div>
+
+                {/* Citas Pendientes - Todas las citas pendientes sin importar la fecha */}
+                {citasPendientes.length > 0 && (
+                    <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-900/20">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-base flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4 text-amber-500" />
+                                Citas Pendientes por Confirmar ({citasPendientes.length})
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2 max-h-64 overflow-y-auto">
+                                {citasPendientes.map((cita) => (
+                                    <div
+                                        key={cita.id}
+                                        className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border"
+                                    >
+                                        <div className="flex-1">
+                                            <p className="font-medium">{cita.cliente?.nombre || 'Cliente sin nombre'}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {new Date(cita.inicio_at).toLocaleDateString('es-CO', {
+                                                    weekday: 'short',
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                                {cita.barbero?.nombre && ` · ${cita.barbero.nombre}`}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant="outline"
+                                                className="text-red-600 border-red-200 hover:bg-red-50"
+                                                onClick={() => updateEstado(cita.id, 'cancelada')}
+                                            >
+                                                Rechazar
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                className="bg-green-600 hover:bg-green-700"
+                                                onClick={() => updateEstado(cita.id, 'confirmada')}
+                                            >
+                                                Confirmar
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* No barbero found → selector */}
                 {!barbero && (

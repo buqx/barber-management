@@ -22,7 +22,7 @@ class ConfirmBookingRequest extends FormRequest
             'slot_fin'      => ['required', 'date_format:H:i'],
             'cliente_nombre' => ['required', 'string', 'max:255'],
             'cliente_email' => ['required', 'email', 'max:255'],
-            'cliente_telefono' => ['nullable', 'string', 'max:20'],
+            'cliente_telefono' => ['required', 'regex:/^[0-9]{10}$/'],
         ];
     }
 }

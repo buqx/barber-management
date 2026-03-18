@@ -13,6 +13,11 @@ class EloquentBarberoRepository implements BarberoRepositoryInterface
         return Barbero::find($id);
     }
 
+    public function findBySlug(string $slug): ?Barbero
+    {
+        return Barbero::where('slug', $slug)->first();
+    }
+
     public function findAll(): Collection
     {
         return Barbero::all();
